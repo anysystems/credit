@@ -34,12 +34,13 @@
  *
  * @return boolean
  */
-function plugin_credit_install() {
+function plugin_credit_install()
+{
 
    $migration = new Migration(PLUGIN_CREDIT_VERSION);
 
    // Parse inc directory
-   foreach (glob(dirname(__FILE__).'/inc/*') as $filepath) {
+   foreach (glob(dirname(__FILE__) . '/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginCredit' . ucfirst($matches[1]);
@@ -70,12 +71,13 @@ function plugin_credit_install() {
  *
  * @return boolean
  */
-function plugin_credit_uninstall() {
+function plugin_credit_uninstall()
+{
 
    $migration = new Migration(PLUGIN_CREDIT_VERSION);
 
    // Parse inc directory
-   foreach (glob(dirname(__FILE__).'/inc/*') as $filepath) {
+   foreach (glob(dirname(__FILE__) . '/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginCredit' . ucfirst($matches[1]);
@@ -95,22 +97,24 @@ function plugin_credit_uninstall() {
 /**
  * Define Dropdown tables to be manage in GLPI :
  */
-function plugin_credit_getDropdown() {
+function plugin_credit_getDropdown()
+{
    return ['PluginCreditType' => PluginCreditType::getTypeName(Session::getPluralNumber())];
 }
 
-function plugin_credit_get_datas(NotificationTargetTicket $target) {
+function plugin_credit_get_datas(NotificationTargetTicket $target)
+{
 
    global $DB;
 
    $target->data['##lang.credit.voucher##'] = PluginCreditEntity::getTypeName();
-   $target->data['##lang.credit.used##']    = __('Quantity consumed', 'credit');
-   $target->data['##lang.credit.left##']    = __('Quantity remaining', 'credit');
+   $target->data['##lang.credit.used##'] = __('Quantity consumed', 'credit');
+   $target->data['##lang.credit.left##'] = __('Quantity remaining', 'credit');
 
    $id = $target->data['##ticket.id##'];
-   $ticket=new Ticket();
+   $ticket = new Ticket();
    $ticket->getFromDB($id);
-   $entity_id=$ticket->fields['entities_id'];
+   $entity_id = $ticket->fields['entities_id'];
 
    $query = "SELECT
          `glpi_plugin_credit_entities`.`name`,
@@ -123,8 +127,66 @@ function plugin_credit_get_datas(NotificationTargetTicket $target) {
    foreach ($DB->request($query) as $credit) {
       $target->data["credit.ticket"][] = [
          '##credit.voucher##' => $credit['name'],
-         '##credit.used##'    => (int)$credit['consumed_on_ticket'],
-         '##credit.left##'    => (int)$credit['quantity'] - (int)$credit['consumed_total'],
+         '##credit.used##' => $credit['consumed_on_ticket'],
+         '##credit.left##' => $credit['quantity'] - $credit['consumed_total'],
       ];
    }
+}
+
+function plugin_credit_getAddSearchOptions($itemtype)
+{
+   if($itemtype != 'Ticket') return;
+
+   $tab = [];
+
+   $tab['credit'] = 'Bolsa de horas';
+
+   $tab['881'] = [
+      'id' => 881,
+      'table' => 'glpi_plugin_credit_tickets',
+      'field' => 'date_creation',
+      'name' => __('Date consumed', 'credit'),
+      'datatype' => 'date',
+      'joinparams' => [
+         'linkfield' => 'tickets_id',
+         'jointype' => 'child',
+      ],
+   ];
+
+   $tab['882'] = [
+      'id' => 882,
+      'table' => 'glpi_plugin_credit_tickets',
+      'field' => 'consumed',
+      'name' => __('Consumed details', 'credit'),
+      'datatype' => 'decimal',
+      'min' => 1,
+      'max' => 1000000,
+      'step' => .25,
+      'toadd' => [0 => __('Unlimited')],
+      'joinparams' => [
+         'linkfield' => 'tickets_id',
+         'jointype' => 'child',
+      ]
+   ];
+
+   $tab[883] = [
+      'id' => 883,
+      'table' => 'glpi_plugin_credit_entities',
+      'field' => 'name',
+      'name' => __('Voucher name', 'credit'),
+      'datatype' => 'dropdown',
+      'joinparams' => [
+         'linkfield' => 'entities_id',
+         'jointype' => '',
+         'beforejoin' => [
+            'table' => 'glpi_plugin_credit_tickets',
+            'joinparams' => [
+               'linkfield' => 'tickets_id',
+               'jointype' => 'child',
+            ]
+         ],
+      ],
+   ];
+
+   return $tab;
 }
