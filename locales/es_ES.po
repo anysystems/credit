@@ -1,0 +1,181 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2022 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-15 12:43+0000\n"
+"PO-Revision-Date: 2023-05-11 08:31+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3\n"
+
+#: inc/ticket.class.php:322
+msgid "Active credit vouchers for ticket entity"
+msgstr "Bolsa de horas activas para el ticket"
+
+#: inc/entity.class.php:153
+msgid "Add a credit voucher"
+msgstr "Añadir bolsa de horas"
+
+#: inc/entity.class.php:185 inc/entity.class.php:243 inc/entity.class.php:391
+msgid "Allow overconsumption"
+msgstr "Permitir sobreconsumo"
+
+#: inc/entityconfig.class.php:61
+msgid "By default consume a voucher for followups"
+msgstr "Consumir por defecto para seguimientos"
+
+#: inc/entityconfig.class.php:71
+msgid "By default consume a voucher for solutions"
+msgstr "Consumir por defecto para soluciones"
+
+#: inc/entityconfig.class.php:66
+msgid "By default consume a voucher for tasks"
+msgstr "Consumir por defecto para tareas"
+
+#: inc/ticket.class.php:404
+msgid "Consume a voucher ?"
+msgstr "¿Consumir bolsa de horas?"
+
+#: inc/ticket.class.php:226
+msgid "Consumed credits for this ticket"
+msgstr "Horas consumidas para el ticket"
+
+#: inc/entity.class.php:296 inc/entity.class.php:301 inc/entity.class.php:302
+msgid "Consumed details"
+msgstr "Detalles de consumo"
+
+#: inc/entityconfig.class.php:41 inc/ticket.class.php:41
+#: inc/entity.class.php:41 setup.php:97
+msgid "Credit voucher"
+msgid_plural "Credit vouchers"
+msgstr[0] "Bolsa de horas"
+msgstr[1] "Bolsa de horas"
+
+#: inc/notificationtargetentity.class.php:93
+msgid "Credit voucher expiration"
+msgstr "Caducidad de la bolsa de horas"
+
+#: inc/entity.class.php:78 inc/entity.class.php:87
+msgid "Credit voucher name is mandatory."
+msgstr "El nombre es obligatorio."
+
+#: inc/ticket.class.php:632 front/ticket.form.php:52
+msgid "Credit voucher successfully added."
+msgstr "Bolsa de horas añadida."
+
+#: inc/type.class.php:43
+msgid "Credit voucher type"
+msgid_plural "Credit vouchers types"
+msgstr[0] "Tipo de crédito"
+msgstr[1] "Tipo de creditos"
+
+#: inc/ticket.class.php:263 inc/ticket.class.php:486 inc/ticket.class.php:647
+msgid "Date consumed"
+msgstr "Fecha consumo"
+
+#: inc/entityconfig.class.php:78 inc/ticketconfig.class.php:176
+#: inc/ticketconfig.class.php:216
+msgid "Default for followups"
+msgstr "Por defecto para seguimientos"
+
+#: inc/entityconfig.class.php:108 inc/ticketconfig.class.php:194
+#: inc/ticketconfig.class.php:224
+msgid "Default for solutions"
+msgstr "Por defecto para soluciones"
+
+#: inc/entityconfig.class.php:93 inc/ticketconfig.class.php:185
+#: inc/ticketconfig.class.php:220
+msgid "Default for tasks"
+msgstr "Por defecto para tareas"
+
+#: inc/ticketconfig.class.php:167 inc/ticketconfig.class.php:212
+msgid "Default for ticket"
+msgstr "Por defecto para ticket"
+
+#: inc/entityconfig.class.php:57
+msgid "Default options for entity"
+msgstr "Por defecto para entidad"
+
+#: inc/ticketconfig.class.php:41
+msgid "Default voucher option"
+msgid_plural "Default voucher options"
+msgstr[0] "Opción por defecto"
+msgstr[1] "Opciones por defecto"
+
+#: inc/ticket.class.php:468
+msgid "Detail of tickets on which consumption is declared"
+msgstr "Detalles del ticket"
+
+#: inc/notificationtargetentity.class.php:61
+#: inc/notificationtargetentity.class.php:78
+msgid "End date"
+msgstr "Fecha de finalización"
+
+#: inc/notificationtargetentity.class.php:36 inc/entity.class.php:402
+msgid "Expiration date"
+msgstr "Fecha de caducidad"
+
+#: inc/entity.class.php:333
+msgid "No credit voucher"
+msgstr "No existe bolsa de horas"
+
+#: inc/ticket.class.php:315 inc/ticket.class.php:474
+msgid "No credit was recorded"
+msgstr "No existe bolsa de horas"
+
+#: inc/entity.class.php:403
+msgid "Notice (in days)"
+msgstr "Días de preaviso"
+
+#: inc/ticket.class.php:201 inc/ticket.class.php:265 inc/ticket.class.php:431
+#: inc/ticket.class.php:488 inc/ticket.class.php:655 inc/entity.class.php:241
+#: hook.php:107
+msgid "Quantity consumed"
+msgstr "Cantidad consumida"
+
+#: inc/ticket.class.php:605 inc/ticket.class.php:614
+#, php-format
+msgid "Quantity consumed exceeds remaining credits: %d"
+msgstr "La cantidad excede el crédito disponible: %d"
+
+#: inc/notificationtargetentity.class.php:62
+#: inc/notificationtargetentity.class.php:79 inc/entity.class.php:242
+#: hook.php:108
+msgid "Quantity remaining"
+msgstr "Cantidad restante"
+
+#: inc/notificationtargetentity.class.php:63
+#: inc/notificationtargetentity.class.php:77 inc/entity.class.php:177
+#: inc/entity.class.php:240 inc/entity.class.php:371
+msgid "Quantity sold"
+msgstr "Cantidad vendida"
+
+#: inc/notificationtargetentity.class.php:94
+msgid "This credit voucher will expire soon. Please, consider buying a new one."
+msgstr "Esta bolsa de horas caducará pronto. Por favor, considere comprar una nueva."
+
+#: inc/ticket.class.php:264 inc/ticket.class.php:487
+msgid "User consumed"
+msgstr "Usuario"
+
+#: inc/ticket.class.php:186 inc/ticket.class.php:261 inc/ticket.class.php:411
+msgid "Voucher name"
+msgstr "Nombre"
+
+#: inc/ticket.class.php:262
+msgid "Voucher type"
+msgstr "Tipo"
+
+#: inc/ticket.class.php:585
+msgid "You must provide a credit voucher"
+msgstr "Debe proporcionar una bolsa de horas"
