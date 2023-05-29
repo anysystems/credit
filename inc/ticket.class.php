@@ -33,32 +33,36 @@ if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
 
-class PluginCreditTicket extends CommonDBTM {
+class PluginCreditTicket extends CommonDBTM
+{
 
    public static $rightname = 'ticket';
 
-   static function getTypeName($nb = 0) {
+   static function getTypeName($nb = 0)
+   {
       return _n('Credit voucher', 'Credit vouchers', $nb, 'credit');
    }
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   {
       $nb = self::countForItem($item);
       switch ($item->getType()) {
-         case 'Ticket' :
+         case 'Ticket':
             if ($_SESSION['glpishow_count_on_tabs']) {
                return self::createTabEntry(self::getTypeName($nb), $nb);
             } else {
                return self::getTypeName($nb);
             }
-         default :
+         default:
             return self::getTypeName($nb);
       }
       return '';
    }
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   {
       switch ($item->getType()) {
-         case 'Ticket' :
+         case 'Ticket':
             self::showForTicket($item);
             break;
       }
@@ -67,8 +71,9 @@ class PluginCreditTicket extends CommonDBTM {
 
    /**
     * @param $item    CommonDBTM object
-   **/
-   public static function countForItem(CommonDBTM $item) {
+    **/
+   public static function countForItem(CommonDBTM $item)
+   {
       return countElementsInTable(self::getTable(), ['tickets_id' => $item->getID()]);
    }
 
@@ -78,16 +83,17 @@ class PluginCreditTicket extends CommonDBTM {
     * @param $ID           integer     tickets ID
     * @return array of vouchers
     */
-   static function getAllForTicket($ID): array {
+   static function getAllForTicket($ID): array
+   {
       global $DB;
 
       $request = [
          'SELECT' => '*',
-         'FROM'   => self::getTable(),
-         'WHERE'  => [
+         'FROM' => self::getTable(),
+         'WHERE' => [
             'tickets_id' => $ID,
          ],
-         'ORDER'  => ['id DESC'],
+         'ORDER' => ['id DESC'],
       ];
 
       $vouchers = [];
@@ -104,17 +110,18 @@ class PluginCreditTicket extends CommonDBTM {
     *
     * @param $ID           integer     plugin_credit_entities_id ID
     * @return array of vouchers
-   **/
-   static function getAllForCreditEntity($ID): array {
+    **/
+   static function getAllForCreditEntity($ID): array
+   {
       global $DB;
 
       $request = [
          'SELECT' => '*',
-         'FROM'   => self::getTable(),
-         'WHERE'  => [
+         'FROM' => self::getTable(),
+         'WHERE' => [
             'plugin_credit_entities_id' => $ID
          ],
-         'ORDER'  => ['id DESC'],
+         'ORDER' => ['id DESC'],
       ];
 
       $tickets = [];
@@ -129,16 +136,17 @@ class PluginCreditTicket extends CommonDBTM {
     * Get consumed tickets for credit entity entry
     *
     * @param $ID integer PluginCreditEntity id
-   **/
-   static function getConsumedForCreditEntity($ID) {
+    **/
+   static function getConsumedForCreditEntity($ID)
+   {
       global $DB;
 
-      $tot   = 0;
+      $tot = 0;
 
       $request = [
          'SELECT' => ['SUM' => 'consumed as sum'],
-         'FROM'   => self::getTable(),
-         'WHERE'  => [
+         'FROM' => self::getTable(),
+         'WHERE' => [
             'plugin_credit_entities_id' => $ID
          ],
       ];
@@ -156,8 +164,9 @@ class PluginCreditTicket extends CommonDBTM {
     * Show credit vouchers consumed for a ticket
     *
     * @param $ticket Ticket object
-   **/
-   static function showForTicket(Ticket $ticket) {
+    **/
+   static function showForTicket(Ticket $ticket)
+   {
       global $DB, $CFG_GLPI;
 
       $ID = $ticket->getField('id');
@@ -180,7 +189,7 @@ class PluginCreditTicket extends CommonDBTM {
          $rand = mt_rand();
          $out .= "<div class='firstbloc'>";
          $out .= "<form name='creditentity_form$rand' id='creditentity_form$rand' method='post' action='";
-         $out .= self::getFormUrl()."'>";
+         $out .= self::getFormUrl() . "'>";
          $out .= "<input type='hidden' name='tickets_id' value='$ID'>";
          $out .= "<label for='voucher'>";
          $out .= __('Voucher name', 'credit');
@@ -188,12 +197,12 @@ class PluginCreditTicket extends CommonDBTM {
          $out .= ' ';
          $out .= PluginCreditEntity::dropdown(
             [
-               'name'      => 'plugin_credit_entities_id',
-               'comments'  => false,
-               'entity'    => $ticket->getEntityID(),
-               'display'   => false,
-               'condition' => PluginCreditEntity::getActiveFilter(),
-               'rand'      => $rand
+               'name' => 'plugin_credit_entities_id',
+               'comments' => false,
+               'entity' => $ticket->getEntityID(),
+               'display' => false,
+               'condition' => ['is_active' => 1],
+               'rand' => $rand
             ]
          );
          $out .= ' ';
@@ -212,7 +221,7 @@ class PluginCreditTicket extends CommonDBTM {
             false
          );
          $out .= ' ';
-         $out .= "<input type='submit' name='add' value='"._sx('button', 'Add')."' class='submit'>";
+         $out .= "<input type='submit' name='add' value='" . _sx('button', 'Add') . "' class='submit'>";
          $out .= Html::closeForm(false);
          $out .= "</div>";
 
@@ -227,44 +236,44 @@ class PluginCreditTicket extends CommonDBTM {
       $out .= "</th></tr></table></div>";
 
       $number = self::countForItem($ticket);
-      $rand   = mt_rand();
+      $rand = mt_rand();
 
       if ($number) {
          $out .= "<div class='spaced'>";
 
          if ($canedit) {
-            $out .= Html::getOpenMassiveActionsForm('mass'.__CLASS__.$rand);
-            $massiveactionparams =  [
-               'num_displayed'    => $number,
-               'container'        => 'mass'.__CLASS__.$rand,
-               'rand'             => $rand,
-               'display'          => false,
+            $out .= Html::getOpenMassiveActionsForm('mass' . __CLASS__ . $rand);
+            $massiveactionparams = [
+               'num_displayed' => $number,
+               'container' => 'mass' . __CLASS__ . $rand,
+               'rand' => $rand,
+               'display' => false,
                'specific_actions' => [
                   'update' => _x('button', 'Update'),
-                  'purge'  => _x('button', 'Delete permanently')
+                  'purge' => _x('button', 'Delete permanently')
                ]
             ];
             $out .= Html::showMassiveActions($massiveactionparams);
          }
 
          $out .= "<table class='tab_cadre_fixehov'>";
-         $header_begin  = "<tr>";
-         $header_top    = '';
+         $header_begin = "<tr>";
+         $header_top = '';
          $header_bottom = '';
-         $header_end    = '';
+         $header_end = '';
          if ($canedit) {
-            $header_begin  .= "<th width='10'>";
-            $header_top    .= Html::getCheckAllAsCheckbox('mass'.__CLASS__.$rand);
-            $header_bottom .= Html::getCheckAllAsCheckbox('mass'.__CLASS__.$rand);
-            $header_end    .= "</th>";
+            $header_begin .= "<th width='10'>";
+            $header_top .= Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand);
+            $header_bottom .= Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand);
+            $header_end .= "</th>";
          }
-         $header_end .= "<th>".__('Voucher name', 'credit')."</th>";
-         $header_end .= "<th>".__('Voucher type', 'credit')."</th>";
-         $header_end .= "<th>".__('Date consumed', 'credit')."</th>";
-         $header_end .= "<th>".__('User consumed', 'credit')."</th>";
-         $header_end .= "<th>".__('Quantity consumed', 'credit')."</th>";
+         $header_end .= "<th>" . __('Voucher name', 'credit') . "</th>";
+         $header_end .= "<th>" . __('Voucher type', 'credit') . "</th>";
+         $header_end .= "<th>" . __('Date consumed', 'credit') . "</th>";
+         $header_end .= "<th>" . __('User consumed', 'credit') . "</th>";
+         $header_end .= "<th>" . __('Quantity consumed', 'credit') . "</th>";
          $header_end .= "</tr>";
-         $out.= $header_begin.$header_top.$header_end;
+         $out .= $header_begin . $header_top . $header_end;
 
          foreach (self::getAllForTicket($ID) as $data) {
 
@@ -282,8 +291,10 @@ class PluginCreditTicket extends CommonDBTM {
             $out .= $credit_entity->getName();
             $out .= "</td>";
             $out .= "<td class='center'>";
-            $out .= Dropdown::getDropdownName(PluginCreditType::getTable(),
-                                              $credit_entity->getField('plugin_credit_types_id'));
+            $out .= Dropdown::getDropdownName(
+               PluginCreditType::getTable(),
+               $credit_entity->getField('plugin_credit_types_id')
+            );
             $out .= "</td>";
             $out .= "<td class='center'>";
             $out .= Html::convDate($data["date_creation"]);
@@ -302,7 +313,7 @@ class PluginCreditTicket extends CommonDBTM {
             $out .= "</td></tr>";
          }
 
-         $out .= $header_begin.$header_bottom.$header_end;
+         $out .= $header_begin . $header_bottom . $header_end;
          $out .= "</table>";
 
          if ($canedit) {
@@ -312,7 +323,7 @@ class PluginCreditTicket extends CommonDBTM {
          }
 
       } else {
-         $out .= "<p class='center b'>".__('No credit was recorded', 'credit')."</p>";
+         $out .= "<p class='center b'>" . __('No credit was recorded', 'credit') . "</p>";
       }
       $out .= "</div>";
 
@@ -336,7 +347,8 @@ class PluginCreditTicket extends CommonDBTM {
     *
     * @return void
     */
-   static public function displayVoucherInTicketProcessingForm($params) {
+   static public function displayVoucherInTicketProcessingForm($params)
+   {
 
       global $CFG_GLPI;
 
@@ -347,9 +359,11 @@ class PluginCreditTicket extends CommonDBTM {
          return;
       }
 
-      if (!($item instanceof ITILSolution)
-          && !($item instanceof TicketTask)
-          && !($item instanceof ITILFollowup)) {
+      if (
+         !($item instanceof ITILSolution)
+         && !($item instanceof TicketTask)
+         && !($item instanceof ITILFollowup)
+      ) {
          return;
       }
 
@@ -359,12 +373,16 @@ class PluginCreditTicket extends CommonDBTM {
       }
 
       $ticket = null;
-      if (array_key_exists('parent', $params['options'])
-          && $params['options']['parent'] instanceof Ticket) {
+      if (
+         array_key_exists('parent', $params['options'])
+         && $params['options']['parent'] instanceof Ticket
+      ) {
          // Ticket can be found in `parent` option for TicketTask.
          $ticket = $params['options']['parent'];
-      } else if (array_key_exists('item', $params['options'])
-         && $params['options']['item'] instanceof Ticket) {
+      } else if (
+         array_key_exists('item', $params['options'])
+         && $params['options']['item'] instanceof Ticket
+      ) {
          // Ticket can be found in `'item'` option for ITILFollowup and ITILSolution.
          $ticket = $params['options']['item'];
       }
@@ -378,8 +396,10 @@ class PluginCreditTicket extends CommonDBTM {
       $out = "";
 
       $canedit = $ticket->canEdit($ticket->getID());
-      if (in_array($ticket->fields['status'], Ticket::getSolvedStatusArray())
-          || in_array($ticket->fields['status'], Ticket::getClosedStatusArray())) {
+      if (
+         in_array($ticket->fields['status'], Ticket::getSolvedStatusArray())
+         || in_array($ticket->fields['status'], Ticket::getClosedStatusArray())
+      ) {
          $canedit = false;
       }
 
@@ -419,12 +439,14 @@ class PluginCreditTicket extends CommonDBTM {
             $default_credit = PluginCreditEntityConfig::getDefaultForEntityAndType($ticket->getEntityID(), $item->getType());
          }
 
-         $out .= PluginCreditEntity::dropdown(['name'      => 'plugin_credit_entities_id',
-                                               'entity'    => $ticket->getEntityID(),
-                                               'display'   => false,
-                                               'value'     => $default_credit,
-                                               'condition' => PluginCreditEntity::getActiveFilter(),
-                                               'rand'      => $rand]);
+         $out .= PluginCreditEntity::dropdown([
+            'name' => 'plugin_credit_entities_id',
+            'entity' => $ticket->getEntityID(),
+            'display' => false,
+            'value' => $default_credit,
+            'condition' => ['is_active' => 1],
+            'rand' => $rand
+         ]);
          $out .= "</td><td colspan='2'></td>";
          $out .= "</tr><tr><td>";
          $out .= "<label for='plugin_credit_quantity'>";
@@ -440,15 +462,15 @@ class PluginCreditTicket extends CommonDBTM {
             false
          );
          $out .= "</td><td colspan='2'></td></tr>";
+      }
 
-         //trigger change to force load quantity select
-         if ($default_credit > 0) {
-            $out .= Html::scriptBlock("
-               $('.timeline-buttons').on('click', function() {
-                  $('#dropdown_plugin_credit_entities_id$rand').trigger('change');
-               });
-            ");
-         }
+      //trigger change to force load quantity select
+      if ($default_credit > 0) {
+         $out .= Html::scriptBlock("
+            $('.timeline-buttons').on('click', function() {
+               $('#dropdown_plugin_credit_entities_id$rand').trigger('change');
+            });
+         ");
       }
 
       echo $out;
@@ -458,8 +480,9 @@ class PluginCreditTicket extends CommonDBTM {
     * Display the detailled list of tickets on which consumption is declared.
     *
     * @param $ID plugin_credit_entities_id
-   **/
-   static function displayConsumed($ID) {
+    **/
+   static function displayConsumed($ID)
+   {
 
       $out = "";
       $out .= "<div class='spaced'>";
@@ -475,19 +498,19 @@ class PluginCreditTicket extends CommonDBTM {
          $out .= "</p>";
       } else {
          $out .= "<table class='tab_cadre_fixehov'>";
-         $header_begin  = "<tr>";
-         $header_top    = '';
+         $header_begin = "<tr>";
+         $header_top = '';
          $header_bottom = '';
-         $header_end    = '';
-         $header_end .= "<th>".__('Title')."</th>";
-         $header_end .= "<th>".__('Status')."</th>";
-         $header_end .= "<th>".__('Type')."</th>";
-         $header_end .= "<th>".__('Ticket category')."</th>";
-         $header_end .= "<th>".__('Date consumed', 'credit')."</th>";
-         $header_end .= "<th>".__('User consumed', 'credit')."</th>";
-         $header_end .= "<th>".__('Quantity consumed', 'credit')."</th>";
+         $header_end = '';
+         $header_end .= "<th>" . __('Title') . "</th>";
+         $header_end .= "<th>" . __('Status') . "</th>";
+         $header_end .= "<th>" . __('Type') . "</th>";
+         $header_end .= "<th>" . __('Ticket category') . "</th>";
+         $header_end .= "<th>" . __('Date consumed', 'credit') . "</th>";
+         $header_end .= "<th>" . __('User consumed', 'credit') . "</th>";
+         $header_end .= "<th>" . __('Quantity consumed', 'credit') . "</th>";
          $header_end .= "</tr>";
-         $out .= $header_begin.$header_top.$header_end;
+         $out .= $header_begin . $header_top . $header_end;
 
          foreach (self::getAllForCreditEntity($ID) as $data) {
 
@@ -533,7 +556,7 @@ class PluginCreditTicket extends CommonDBTM {
             $out .= "</td></tr>";
          }
 
-         $out .= $header_begin.$header_bottom.$header_end;
+         $out .= $header_begin . $header_bottom . $header_end;
          $out .= "</table>";
       }
 
@@ -547,8 +570,8 @@ class PluginCreditTicket extends CommonDBTM {
     *
     * @return boolean
     */
-   static function consumeVoucher(CommonDBTM $item) {
-
+   static function consumeVoucher(CommonDBTM $item)
+   {
       if (!is_array($item->input) || !count($item->input)) {
          return;
       }
@@ -557,9 +580,11 @@ class PluginCreditTicket extends CommonDBTM {
       if (array_key_exists('tickets_id', $item->fields)) {
          // Ticket ID can be found in `tickets_id` field for TicketTask.
          $ticketId = $item->fields['tickets_id'];
-      } else if (array_key_exists('itemtype', $item->fields)
-                 && array_key_exists('items_id', $item->fields)
-                 && 'Ticket' == $item->fields['itemtype']) {
+      } else if (
+         array_key_exists('itemtype', $item->fields)
+         && array_key_exists('items_id', $item->fields)
+         && 'Ticket' == $item->fields['itemtype']
+      ) {
          // Ticket ID can be found in `items_id` field for ITILFollowup and ITILSolution.
          $ticketId = $item->fields['items_id'];
       }
@@ -569,18 +594,24 @@ class PluginCreditTicket extends CommonDBTM {
          return;
       }
 
-      if (!is_numeric(Session::getLoginUserID(false))
-          || !Session::haveRightsOr('ticket', [Ticket::STEAL, Ticket::OWN])) {
+      if (
+         !is_numeric(Session::getLoginUserID(false))
+         || !Session::haveRightsOr('ticket', [Ticket::STEAL, Ticket::OWN])
+      ) {
          return;
       }
 
-      if (!isset($item->input['plugin_credit_consumed_voucher'])
-          || $item->input['plugin_credit_consumed_voucher'] != 1) {
+      if (
+         !isset($item->input['plugin_credit_consumed_voucher'])
+         || $item->input['plugin_credit_consumed_voucher'] != 1
+      ) {
          return;
       }
 
-      if (!isset($item->input['plugin_credit_entities_id'])
-          || $item->input['plugin_credit_entities_id'] == 0) {
+      if (
+         !isset($item->input['plugin_credit_entities_id'])
+         || $item->input['plugin_credit_entities_id'] == 0
+      ) {
          Session::addMessageAfterRedirect(
             __('You must provide a credit voucher', 'credit'),
             true,
@@ -594,8 +625,8 @@ class PluginCreditTicket extends CommonDBTM {
       $credit_entity = new PluginCreditEntity();
       $credit_entity->getFromDB($item->input['plugin_credit_entities_id']);
 
-      $quantity_sold      = (int)$credit_entity->fields['quantity'];
-      $quantity_consumed  = $credit_ticket->getConsumedForCreditEntity($item->input['plugin_credit_entities_id']);
+      $quantity_sold = $credit_entity->fields['quantity'];
+      $quantity_consumed = $credit_ticket->getConsumedForCreditEntity($item->input['plugin_credit_entities_id']);
       $quantity_remaining = max(0, $quantity_sold - $quantity_consumed);
 
       if (0 !== $quantity_sold && $quantity_remaining < $item->input['plugin_credit_quantity']) {
@@ -622,10 +653,10 @@ class PluginCreditTicket extends CommonDBTM {
       }
 
       $input = [
-         'tickets_id'                => $ticket->getID(),
+         'tickets_id' => $ticket->getID(),
          'plugin_credit_entities_id' => $item->input['plugin_credit_entities_id'],
-         'consumed'                  => $item->input['plugin_credit_quantity'],
-         'users_id'                  => Session::getLoginUserID(),
+         'consumed' => $item->input['plugin_credit_quantity'],
+         'users_id' => Session::getLoginUserID(),
       ];
       if ($credit_ticket->add($input)) {
          Session::addMessageAfterRedirect(
@@ -637,46 +668,50 @@ class PluginCreditTicket extends CommonDBTM {
    }
 
 
-   function rawSearchOptions() {
+   function rawSearchOptions()
+   {
       $tab = parent::rawSearchOptions();
 
       $tab[] = [
-         'id'       => 881,
-         'table'    => self::getTable(),
-         'field'    => 'date_creation',
-         'name'     => __('Date consumed', 'credit'),
+         'id' => 881,
+         'table' => self::getTable(),
+         'field' => 'date_creation',
+         'name' => __('Date consumed', 'credit'),
          'datatype' => 'date',
       ];
 
       $tab[] = [
-         'id'       => 882,
-         'table'    => self::getTable(),
-         'field'    => 'consumed',
-         'name'     => __('Quantity consumed', 'credit'),
-         'datatype' => 'number',
-         'min'      => 1,
-         'max'      => 1000000,
-         'step'     => 1,
-         'toadd'    => [0 => __('Unlimited')],
+         'id' => 882,
+         'table' => self::getTable(),
+         'field' => 'consumed',
+         'name' => __('Quantity consumed', 'credit'),
+         'datatype' => 'decimal',
+         'min' => 1,
+         'max' => 1000000,
+         'step' => 1,
+         'toadd' => [0 => __('Unlimited')],
       ];
 
       $tab[] = [
-         'id'       => 883,
-         'table'    => PluginCreditEntity::getTable(),
-         'field'    => 'name',
-         'name'     => PluginCreditEntity::getTypeName(Session::getPluralNumber()),
+         'id' => 883,
+         'table' => PluginCreditEntity::getTable(),
+         'field' => 'name',
+         'name' => PluginCreditEntity::getTypeName(Session::getPluralNumber()),
          'datatype' => 'dropdown',
       ];
 
       return $tab;
    }
 
+   
+
    /**
     * Install all necessary table for the plugin
     *
     * @return boolean True if success
     */
-   static function install(Migration $migration) {
+   static function install(Migration $migration)
+   {
       global $DB;
 
       $default_charset = DBConnection::getDefaultCharset();
@@ -691,7 +726,7 @@ class PluginCreditTicket extends CommonDBTM {
                      `tickets_id` int {$default_key_sign} NOT NULL DEFAULT '0',
                      `plugin_credit_entities_id` int {$default_key_sign} NOT NULL DEFAULT '0',
                      `date_creation` timestamp NULL DEFAULT NULL,
-                     `consumed` int NOT NULL DEFAULT '0',
+                     `consumed` decimal(11,2) NOT NULL DEFAULT '0',
                      `users_id` int {$default_key_sign} NOT NULL DEFAULT '0',
                      PRIMARY KEY (`id`),
                      KEY `tickets_id` (`tickets_id`),
@@ -725,7 +760,8 @@ class PluginCreditTicket extends CommonDBTM {
     *
     * @return boolean True if success
     */
-   static function uninstall(Migration $migration) {
+   static function uninstall(Migration $migration)
+   {
 
       $table = self::getTable();
       $migration->dropTable($table);

@@ -68,14 +68,6 @@ class PluginCreditTicketConfig extends CommonDBTM {
             break;
       }
 
-      $criteria = array_merge(
-         ['id' => $voucher_id],
-         PluginCreditEntity::getActiveFilter()
-      );
-      if (countElementsInTable(PluginCreditEntity::getTable(), $criteria) === 0) {
-         $voucher_id = null;
-      }
-
       return $voucher_id ?: null;
    }
 
@@ -108,7 +100,7 @@ class PluginCreditTicketConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
             'on_change'   => 'PluginCredit.propagateDefaultVoucherValue(this)',
@@ -122,7 +114,7 @@ class PluginCreditTicketConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => $ticket_config->fields['plugin_credit_entities_id_followups'] ?? 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
             'width'       => $embed_in_ticket_form ? '100%' : '',
@@ -135,7 +127,7 @@ class PluginCreditTicketConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => $ticket_config->fields['plugin_credit_entities_id_tasks'] ?? 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
             'width'       => $embed_in_ticket_form ? '100%' : '',
@@ -148,7 +140,7 @@ class PluginCreditTicketConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => $ticket_config->fields['plugin_credit_entities_id_solutions'] ?? 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
             'width'       => $embed_in_ticket_form ? '100%' : '',

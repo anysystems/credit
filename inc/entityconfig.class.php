@@ -42,7 +42,7 @@ class PluginCreditEntityConfig extends CommonDBTM {
    }
 
    static function showEntityConfigForm($entity_id) {
-
+	return '';
       $config = new self();
       $config->getFromDBByCrit(['entities_id' => $entity_id]);
 
@@ -84,7 +84,7 @@ class PluginCreditEntityConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => $config->fields['plugin_credit_entities_id_followups'] ?? 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
          ]
@@ -99,7 +99,7 @@ class PluginCreditEntityConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => $config->fields['plugin_credit_entities_id_tasks'] ?? 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
          ]
@@ -114,7 +114,7 @@ class PluginCreditEntityConfig extends CommonDBTM {
             'entity_sons' => true,
             'display'     => false,
             'value'       => $config->fields['plugin_credit_entities_id_solutions'] ?? 0,
-            'condition'   => PluginCreditEntity::getActiveFilter(),
+            'condition'   => ['is_active' => 1],
             'comments'    => false,
             'rand'        => $rand,
          ]
@@ -160,14 +160,6 @@ class PluginCreditEntityConfig extends CommonDBTM {
          case ITILSolution::getType():
             $voucher_id = $config->fields['plugin_credit_entities_id_solutions'] ?? null;
             break;
-      }
-
-      $criteria = array_merge(
-         ['id' => $voucher_id],
-         PluginCreditEntity::getActiveFilter()
-      );
-      if (countElementsInTable(PluginCreditEntity::getTable(), $criteria) === 0) {
-         $voucher_id = null;
       }
 
       return $voucher_id ?: null;
@@ -233,7 +225,7 @@ class PluginCreditEntityConfig extends CommonDBTM {
          || $DB->fieldExists($vouchers_table, 'is_default_task')
          || $DB->fieldExists($vouchers_table, 'is_default_solution')
       ) {
-         $vouchers_iterator = $DB->request(['FROM' => PluginCreditEntity::getTable(), 'WHERE' => PluginCreditEntity::getActiveFilter()]);
+         $vouchers_iterator = $DB->request(['FROM' => PluginCreditEntity::getTable(), 'WHERE' => ['is_active' => 1]]);
          foreach ($vouchers_iterator as $voucher_data) {
             $is_default_for_followups = $voucher_data['is_default_followup'] ?? 0;
             $is_default_for_tasks     = $voucher_data['is_default_task'] ?? 0;

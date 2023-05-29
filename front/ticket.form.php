@@ -44,7 +44,7 @@ $PluginCreditTicket = new PluginCreditTicket();
 $input = [
     'tickets_id'                => $_REQUEST['tickets_id'],
     'plugin_credit_entities_id' => $_REQUEST['plugin_credit_entities_id'],
-    'consumed'                  => $_REQUEST['plugin_credit_quantity'],
+    'consumed'                  => floatval($_REQUEST['plugin_credit_quantity']),
     'users_id'                  => Session::getLoginUserID(),
 ];
 if ($PluginCreditTicket->add($input)) {
