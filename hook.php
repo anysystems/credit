@@ -135,8 +135,66 @@ function plugin_credit_get_datas(NotificationTargetTicket $target)
 
 function plugin_credit_getAddSearchOptions($itemtype)
 {
-   if($itemtype != 'Ticket') return;
+   if($itemtype == 'Ticket') return searchOptionsForTicket();
+   elseif ($itemtype == 'Entity') return searchOptionsForEntity();
+}
 
+function searchOptionsForTicket() {
+   $tab = [];
+
+   $tab['credit'] = 'Bolsa de horas';
+
+   $tab['881'] = [
+      'id' => 881,
+      'table' => 'glpi_plugin_credit_tickets',
+      'field' => 'date_creation',
+      'name' => __('Date consumed', 'credit'),
+      'datatype' => 'date',
+      'joinparams' => [
+         'linkfield' => 'tickets_id',
+         'jointype' => 'child',
+      ],
+   ];
+
+   $tab['882'] = [
+      'id' => 882,
+      'table' => 'glpi_plugin_credit_tickets',
+      'field' => 'consumed',
+      'name' => __('Consumed details', 'credit'),
+      'datatype' => 'decimal',
+      'min' => 1,
+      'max' => 1000000,
+      'step' => .25,
+      'toadd' => [0 => __('Unlimited')],
+      'joinparams' => [
+         'linkfield' => 'tickets_id',
+         'jointype' => 'child',
+      ]
+   ];
+
+   $tab[883] = [
+      'id' => 883,
+      'table' => 'glpi_plugin_credit_entities',
+      'field' => 'name',
+      'name' => __('Voucher name', 'credit'),
+      'datatype' => 'dropdown',
+      'joinparams' => [
+         'linkfield' => 'entities_id',
+         'jointype' => '',
+         'beforejoin' => [
+            'table' => 'glpi_plugin_credit_tickets',
+            'joinparams' => [
+               'linkfield' => 'tickets_id',
+               'jointype' => 'child',
+            ]
+         ],
+      ],
+   ];
+
+   return $tab;
+}
+
+function searchOptionsForEntity() {
    $tab = [];
 
    $tab['credit'] = 'Bolsa de horas';

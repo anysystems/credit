@@ -48,3 +48,27 @@ Obtain a personalized service experience, associated with benefits and opportuni
 
 * **Code**: you can redistribute it and/or modify
     it under the terms of the GNU General Public License ([GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.en.html)).
+
+## SUMMARY VIEW
+
+```sql
+
+DROP VIEW `glpi_plugin_credit_entities_consumed`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`admin_anysystems_glpi`@`localhost` SQL SECURITY DEFINER VIEW `glpi_plugin_credit_entities_consumed`
+AS
+
+SELECT CE.*,
+
+CONCAT(CE.name, ': ', CE.quantity, ' - ',SUM(CT.`consumed`),  ' = ', CE.quantity - SUM(CT.`consumed`)) as consumed_from_credit_formatted,
+CE.quantity - SUM(CT.`consumed`) as remaining_from_credit,
+SUM(CT.`consumed`) as comsumed_from_credit,
+IF(CE.quantity > 0, CE.quantity, '∞') as quantity_sold
+
+FROM glpi_plugin_credit_entities AS CE LEFT JOIN glpi_plugin_credit_tickets AS CT ON CE.id = CT.plugin_credit_entities_id
+
+WHERE CE.`end_date` >= now()
+
+GROUP BY id
+
+```
