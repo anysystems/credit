@@ -163,7 +163,7 @@ function searchOptionsForTicket() {
       'name' => __('Consumed details', 'credit'),
       'datatype' => 'decimal',
       'min' => 1,
-      'max' => 1000000,
+      'max' => 10000,
       'step' => .25,
       'toadd' => [0 => __('Unlimited')],
       'joinparams' => [
@@ -218,7 +218,7 @@ function searchOptionsForEntity() {
       'name' => __('Consumed details', 'credit'),
       'datatype' => 'decimal',
       'min' => 1,
-      'max' => 1000000,
+      'max' => 10000,
       'step' => .25,
       'toadd' => [0 => __('Unlimited')],
       'joinparams' => [
